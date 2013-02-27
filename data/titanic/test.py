@@ -1,0 +1,42 @@
+# IPython log file
+
+get_ipython().magic(u'hist')
+import pandus as pd
+import pandas as pd
+test = pd.read_csv("./test.csv")
+train = pd.read_csv("./train.csv.csv")
+train = pd.read_csv("./train.csv")
+get_ipython().magic(u'save')
+psave
+get_ipython().magic(u'store')
+get_ipython().magic(u'store test')
+get_ipython().magic(u'store train')
+get_ipython().magic(u'store')
+get_ipython().magic(u'store')
+get_ipython().magic(u'store >>test.txt')
+get_ipython().magic(u"logstart 'test.py'")
+import pandas as pd
+train = pd.read_csv("./train.csv")
+test = pd.read_csv("./test.csv")
+print test.head(10)
+print head.head(10)
+print train.head(10)
+print train.head(10)+test.head(10)
+print train.head(10).append(test.head(10))
+print train.head(10).append(test.head(10))
+print train.head(10).append(test.head(10))
+print train.head(10).append(test.head(10))
+print train.head(10).append(test.head(10))
+print train.head(10).append(test.head(10))
+print train.head(10).append(test.head(10))
+print train.head(10).append(test.head(10))
+print train.head(10).append(test.head(10))
+print train.head(10).append(test.head(10))
+print train.head(10).append(test.head(10))
+print train.head(10).append(test.head(10))
+print train.head(10).append(test.head(10),ignore_index = True)
+print train.append(test,ignore_index = True)
+print train.head(10).append(test.head(10),ignore_index = True)
+mi = train.head(10).append(test.head(10),ignore_index = True)
+import rpy2.robjects as rob
+get_ipython().magic(u'logstop ')
