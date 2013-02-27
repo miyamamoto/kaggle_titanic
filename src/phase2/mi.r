@@ -27,4 +27,4 @@ train.dat.all <- mi.completed(train.imp)
 mi.data.frame(train.imp, m=1)
 
 #　データの出力
- write.table(mi.data.frame(train.imp, m=1), filename_out, quote=F, col.names=T, append=T,sep = ",")
+write.table(mi.data.frame(train.imp, m=1), filename_out, quote=F, col.names=T, append=F,sep = ",")
