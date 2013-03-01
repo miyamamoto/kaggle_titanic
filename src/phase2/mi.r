@@ -20,11 +20,8 @@ train.pre <- mi.preprocess(train.mi)
 attr(train.pre, 'mi.info')
 
 # 欠損値補完とデータの取得
-train.imp <- mi(train.pre, R.hat=1.8)
+train.imp <- mi(train.pre, R.hat=2.5, n.iter = 30)
 train.dat.all <- mi.completed(train.imp)
-
-#
-mi.data.frame(train.imp, m=1)
 
 #　データの出力
 write.table(mi.data.frame(train.imp, m=1), filename_out, quote=F, col.names=T, append=F,sep = ",")
