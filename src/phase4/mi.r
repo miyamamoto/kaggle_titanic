@@ -18,7 +18,7 @@ train.mi$X <- NULL
 train.mi$sibsp <-NULL
 train.mi$parce <- NULL
 train.mi$ticket <- NULL
-#train.mi$fare <- NULL
+train.mi$fare <- NULL
 train.mi$cabin <-NULL
 #train.mi$embark <- NULL
 #train.mi$job <-NULL

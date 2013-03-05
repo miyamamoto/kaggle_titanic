@@ -59,7 +59,7 @@ def llfun(act, pred):
 
 def rfKFold(train,target):
     #In this case we'll use a random forest, but this could be any classifier
-	cfr = RandomForestClassifier(n_estimators=100, max_depth=None, min_samples_split=1, random_state=1, n_jobs=-1)
+	cfr = RandomForestClassifier(n_estimators=100, oob_score=True, max_depth=None, min_samples_split=1, random_state=1, n_jobs=-1,compute_importances=True)
 	target = target.reshape(-1)
 
 	#Simple K-Fold cross validation. 5 folds.
@@ -76,7 +76,7 @@ def rfKFold(train,target):
 	return np.array(results).mean()
 
 def random_tree_classifier(data, target):
-	clf = RandomForestClassifier(n_estimators=100, max_depth=None, min_samples_split=1, random_state=1, n_jobs=-1)
+	clf = RandomForestClassifier(n_estimators=100, oob_score=True,max_depth=None, min_samples_split=1, random_state=1, n_jobs=-1,compute_importances=True)
 	target = target.reshape(-1)
 	clf.fit(data, target)
 
@@ -91,19 +91,20 @@ def main():
 	clean_testdata = cleandata(testdata)
 	tmp_out = clean_traindata.append(clean_testdata)
 
-	for i in range(100):
+	for i in range(500):
 		filename = "../../tmp/tmp_phase4" 
 		file_out = filename+"_"+str(i)+"_out.csv"
 		file_in = filename+"_"+str(i)+"_in.csv"
 
 		tmp_out[['pclass','sex','age','sibsp','parch','fare','cabin','embarked','cabin_level','cabin_leftright']].to_csv(file_out)
-
 		os.system("R --file=mi.r --args " + file_out + " " + file_in)
-		
 		alldata = pd.read_csv(file_in)
+		
+		#for debug
 		alldata[:len(traindata)].to_csv(filename+"train_"+str(i)+".csv")
 		alldata[(len(traindata)):].to_csv(filename+"test_"+str(i)+".csv")
 	
+		#convert pandas to array
 		ntargetdata = traindata[['survived']].values
 		ntraindata = alldata[:len(traindata)].values
 		ntestdata = alldata[(len(traindata)):].values

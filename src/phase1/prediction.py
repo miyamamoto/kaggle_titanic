@@ -5,9 +5,11 @@ import numpy as np
 def cleandata(data):
 	data.sex[data.sex == "male"] = 1
 	data.sex[data.sex == "female"] = 0
+	return data
+
+def fillnadata(data):
 	data.age = data.age.fillna(data.age.mean())
 	data.fare = data.fare.fillna(data.fare.mean())
-	
 	return data
 
 def random_tree_classifier(data, target):
@@ -24,6 +26,9 @@ def main():
 
 	traindata = cleandata(traindata)
 	testdata = cleandata(testdata)
+
+	traindata = fillnadata(traindata)
+	testdata = fillnadata(testdata)
 
 	#convert pd format to numpy array
 	ntraindata = traindata[['pclass','sex','sibsp','parch','fare','age']].values
