@@ -120,12 +120,10 @@ def random_tree_classifier(data, target,estimator,depth):
 	clf = RandomForestClassifier(n_estimators=estimator, oob_score=True,max_depth=depth, min_samples_split=1, random_state=1, n_jobs=-1,compute_importances=True)
 	target = target.reshape(-1)
 	clf.fit(data, target)
-
 	return clf
 
 
 def main():
-	
 	traindata = pd.read_csv('../../data/titanic/train.csv')
 	testdata = pd.read_csv('../../data/titanic/test.csv')
 	clean_traindata = cleandata(traindata)
@@ -149,7 +147,6 @@ def main():
 		ntargetdata = traindata[['survived']].values
 		ntraindata = alldata[:len(traindata)].values
 		ntestdata = alldata[(len(traindata)):].values
-
 
 		#K-fold cross-validation
 #		score = rfKFold(ntraindata,ntargetdata)
