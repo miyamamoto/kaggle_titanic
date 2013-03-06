@@ -57,26 +57,67 @@ def llfun(act, pred):
     ll = ll * -1.0/len(act)
     return ll
 
-def rfKFold(train,target):
-    #In this case we'll use a random forest, but this could be any classifier
-	cfr = RandomForestClassifier(n_estimators=100, oob_score=True, max_depth=None, min_samples_split=1, random_state=1, n_jobs=-1,compute_importances=True)
-	target = target.reshape(-1)
+def KFold(train,target):
 
-	#Simple K-Fold cross validation. 5 folds.
-	print "n_fold size:" + str(n_folds_size(train))
-	cv = cross_validation.KFold(len(train), n_folds=n_folds_size(train), indices=False)
+	result = pd.DataFrame()
 
-	results = []
-	for traincv, testcv in cv:
-		probas = cfr.fit(train[traincv], target[traincv]).predict_proba(train[testcv])
-		results.append(llfun(target[testcv], [x[1] for x in probas]) )
-	
-	print "Results: " + str(np.array(results).mean())
+	for estimator in range(100,101):
+		for depth in range(10,15):
+			sum_score = 0
+		    #In this case we'll use a random forest, but this could be any classifier
+			cfr = RandomForestClassifier(n_estimators=estimator, oob_score=True, max_depth=depth, min_samples_split=1, random_state=1, n_jobs=-1,compute_importances=True)
+			target = target.reshape(-1)
 
-	return np.array(results).mean()
+			#Simple K-Fold cross validation. 5 folds.
+			nfoldsize = n_folds_size(train)
+			print "n_fold size:" + str(nfoldsize)
+			cv = cross_validation.KFold(len(train), n_folds=nfoldsize, indices=False)
 
-def random_tree_classifier(data, target):
-	clf = RandomForestClassifier(n_estimators=100, oob_score=True,max_depth=None, min_samples_split=1, random_state=1, n_jobs=-1,compute_importances=True)
+			for traincv, testcv in cv:
+				probas = cfr.fit(train[traincv], target[traincv]).predict(train[testcv])
+				score = sum(probas==target[testcv])
+				sum_score += score
+			
+
+			print "="*40    
+			print "estimator = "+str(estimator)
+			print "depth = "+str(depth)
+			print "average score in %0.4f" % (sum_score/nfoldsize)    
+			print "="*40 
+			result = result.append(pd.DataFrame({"estimator":[estimator],"depth":[depth],"score":[score]}),ignore_index=True)   
+	    
+	print result.sort_index(by="score",ascending=0)
+
+	return result.ix[0]["estimator"], result.ix[0]["depth"], result.ix[0]["score"]
+	#	return np.array(results).mean()
+
+
+# def rfKFold(train,target):
+
+# 	for i in range(100,101):
+# 		for j in range(10,11):
+# 		    #In this case we'll use a random forest, but this could be any classifier
+# 			cfr = RandomForestClassifier(n_estimators=i, oob_score=True, max_depth=j, min_samples_split=1, random_state=1, n_jobs=-1,compute_importances=True)
+# 			target = target.reshape(-1)
+
+# 			#Simple K-Fold cross validation. 5 folds.
+# 			print "n_fold size:" + str(n_folds_size(train))
+# 			cv = cross_validation.KFold(len(train), n_folds=n_folds_size(train), indices=False)
+
+# 			results = []
+# 			for traincv, testcv in cv:
+# 				probas = cfr.fit(train[traincv], target[traincv]).predict_proba(train[testcv])
+# 				results.append(llfun(target[testcv], [x[1] for x in probas]) )
+
+
+# 			print "i = "+ str(i)
+# 			print "j = "+ str(j)
+# 			print "Results: " + str(np.array(results).mean())
+
+	#	return np.array(results).mean()
+
+def random_tree_classifier(data, target,estimator,depth):
+	clf = RandomForestClassifier(n_estimators=estimator, oob_score=True,max_depth=depth, min_samples_split=1, random_state=1, n_jobs=-1,compute_importances=True)
 	target = target.reshape(-1)
 	clf.fit(data, target)
 
@@ -91,7 +132,7 @@ def main():
 	clean_testdata = cleandata(testdata)
 	tmp_out = clean_traindata.append(clean_testdata)
 
-	for i in range(500):
+	for i in range(10):
 		filename = "../../tmp/tmp_phase4" 
 		file_out = filename+"_"+str(i)+"_out.csv"
 		file_in = filename+"_"+str(i)+"_in.csv"
@@ -109,18 +150,20 @@ def main():
 		ntraindata = alldata[:len(traindata)].values
 		ntestdata = alldata[(len(traindata)):].values
 
+
 		#K-fold cross-validation
-		score = rfKFold(ntraindata,ntargetdata)
+#		score = rfKFold(ntraindata,ntargetdata)
+		estimator,depth,score = KFold(ntraindata,ntargetdata)
 
 		#constract model
-		clf = random_tree_classifier(ntraindata, ntargetdata)
+		clf = random_tree_classifier(ntraindata, ntargetdata,estimator,depth)
 
 		#predict
 		predict = clf.predict(ntestdata)
 
 		#output csv
 		z = np.array(zip(np.arange(1,len(predict)+1), predict), dtype=[('int', int), ('str', '|S1')])
-		np.savetxt('../..//result/predict_phase4_'+str(score)+'_'+str(i)+'.csv', z, fmt='"%i","%s"',header ='"","survived"',comments='')	
+		np.savetxt('../..//result/predict_phase4_'+str(score)+'_'+str(estimator)+'_'+str(depth)+'_'+str(i)+'.csv', z, fmt='"%i","%s"',header ='"","survived"',comments='')	
 
 if __name__ == '__main__':
 	main()
