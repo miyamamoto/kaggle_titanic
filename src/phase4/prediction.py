@@ -61,8 +61,8 @@ def KFold(train,target):
 
 	result = pd.DataFrame()
 
-	for estimator in range(100,101):
-		for depth in range(10,15):
+	for estimator in range(1,100):
+		for depth in range(1,10):
 			sum_score = 0
 		    #In this case we'll use a random forest, but this could be any classifier
 			cfr = RandomForestClassifier(n_estimators=estimator, oob_score=True, max_depth=depth, min_samples_split=1, random_state=1, n_jobs=-1,compute_importances=True)
@@ -87,6 +87,9 @@ def KFold(train,target):
 			result = result.append(pd.DataFrame({"estimator":[estimator],"depth":[depth],"score":[score]}),ignore_index=True)   
 	    
 	print result.sort_index(by="score",ascending=0)
+
+	result.to_csv('../../tmp/'+str(estimator)+'_'+str(depth)+'.csv')
+
 
 	return result.ix[0]["estimator"], result.ix[0]["depth"], result.ix[0]["score"]
 	#	return np.array(results).mean()
@@ -130,7 +133,7 @@ def main():
 	clean_testdata = cleandata(testdata)
 	tmp_out = clean_traindata.append(clean_testdata)
 
-	for i in range(10):
+	for i in range(5):
 		filename = "../../tmp/tmp_phase4" 
 		file_out = filename+"_"+str(i)+"_out.csv"
 		file_in = filename+"_"+str(i)+"_in.csv"
