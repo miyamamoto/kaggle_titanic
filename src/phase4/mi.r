@@ -12,18 +12,9 @@ filename_out <- commandArgs()[5]
 train <- read.table(filename_in, header=T, sep=',')
 train.mi <- train
 train.mi$X <- NULL
-#train.mi$name <- NULL
-#train.mi$sex <- NULL
-#train.mi$age <- NULL
-train.mi$sibsp <-NULL
-train.mi$parce <- NULL
 train.mi$ticket <- NULL
-train.mi$fare <- NULL
 train.mi$cabin <-NULL
-#train.mi$embark <- NULL
-#train.mi$job <-NULL
 #train.mi$cabin_level <- NULL
-#train.mi$cabin_leftright <- NULL
 
 # NAデータのプロット
 mp.plot(train.mi, clustered=FALSE) 
@@ -41,4 +32,4 @@ train.imp <- mi(train.pre, R.hat=2.5, n.iter = 30)
 train.dat.all <- mi.completed(train.imp)
 
 #　データの出力
-write.table(mi.data.frame(train.imp, m=1), filename_out, quote=F, col.names=T, append=F,sep = ",")
+write.table(mi.data.frame(train.imp, m=2), filename_out, quote=F, col.names=T, append=F,sep = ",")
